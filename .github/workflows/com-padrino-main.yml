@@ -26,9 +26,9 @@ jobs:
         run: |-
           Rscript plot_compadrino.R
       - commit Results
-        run: |
+        run: |-
           git config user.name ${{github.actor}}
           git config user.email ${{github.actor}}
           git add figures
-          git commit -m 'update figures' || echo "No changes"
+          git commit -m 'update figures [ci skip]' || echo "No changes"
           git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:${{github.ref}} || echo "No changes"
