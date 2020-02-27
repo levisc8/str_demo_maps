@@ -55,12 +55,13 @@ db <- rbind(db, pdb)
 # Build plots
 
 library(ggplot2)
+library(viridis)
 
 wrld <- map_data('world')
 
 dir.create('figures', FALSE)
 
-png(filename = 'figures/compadre-padrino-worldmap.png',
+png(filename = 'figures/compadre-padrino-worldmap-color.png',
     height = 12,
     width = 8,
     units = 'in',
@@ -75,8 +76,60 @@ png(filename = 'figures/compadre-padrino-worldmap.png',
                    color = Kingdom,
                    x = Lon,
                    y = Lat),
-               inherit.aes = FALSE) +
+               inherit.aes = FALSE,
+               alpha = 0.9) +
     theme(panel.background = element_rect(fill = NA),
-          panel.grid = element_line())
+          panel.grid = element_line(),
+          legend.key = element_rect(fill = NA,
+                                    color = 'black'),
+          legend.key.size = unit(0.03, 'npc'),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 18)) +
+    scale_color_manual(breaks = c('Animalia',
+                                  'Chromalveolata',
+                                  'Chromista',
+                                  "Fungi",
+                                  'Plantae'),
+                       values = viridis::viridis(5)) +
+    scale_x_continuous("Longitude") +
+    scale_y_continuous("Latitude",
+                       breaks = c(-45, 0, 45))
+
+
+dev.off()
+
+png(filename = 'figures/compadre-padrino-worldmap-bw.png',
+    height = 12,
+    width = 8,
+    units = 'in',
+    res = 450)
+
+ggplot(wrld, aes(x = long, y = lat, group = group)) +
+  geom_polygon(color = 'grey50',
+               fill = NA) +
+  coord_map(xlim = c(-180, 180)) +
+  geom_point(data = db,
+             aes(shape = Model,
+                 color = Kingdom,
+                 x = Lon,
+                 y = Lat),
+             inherit.aes = FALSE) +
+  theme(panel.background = element_rect(fill = NA),
+        panel.grid = element_line(),
+        legend.key = element_rect(fill = NA,
+                                  color = 'black'),
+        legend.key.size = unit(0.03, 'npc'),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 18)) +
+  scale_color_manual(breaks = c('Animalia',
+                                'Chromalveolata',
+                                'Chromista',
+                                "Fungi",
+                                'Plantae'),
+                     values = grey(seq(0, 0.8, length.out = 5))) +
+  scale_x_continuous("Longitude") +
+  scale_y_continuous("Latitude",
+                     breaks = c(-45, 0, 45))
+
 
 dev.off()

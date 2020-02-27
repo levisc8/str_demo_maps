@@ -11,4 +11,6 @@ This currently excludes all studies which do not have kingdom, lat, or long info
 in the database. Thus, a considerable number of species may be omitted at any given
 build. Checks for this number are not run.
 
-The job is scheduled to run at midnight on the first of every month.  
+The job is scheduled to run at midnight on the first of every month. 
+
+Mostly just working out how these CRON jobs work so I can use them elsewhere.
