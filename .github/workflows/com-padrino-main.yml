@@ -1,11 +1,10 @@
+name: Build Compadre and Padrino World Maps
 on:
   schedule:
     - cron: '0 0 1 * *'
   push:
     branches:
       - 'master'
-
-name: Build Compadre and Padrino World Maps
 
 jobs:
   render:
