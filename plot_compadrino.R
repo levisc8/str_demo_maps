@@ -28,7 +28,6 @@ cdb_fetch <- function(cdb) {
 
 # collect compadre data
 
-source('functions.R')
 cpd <- cdb_fetch('compadre')
 cmd <- cdb_fetch('comadre')
 
