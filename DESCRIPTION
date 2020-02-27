@@ -1,0 +1,3 @@
+Package: str_demo_maps
+Version: 0.1.0
+Imports: ggplot2
