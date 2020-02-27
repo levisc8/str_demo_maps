@@ -21,7 +21,7 @@ jobs:
       - name: Install package dependencies
         run: |-
           Rscript -e "install.packages('remotes', repos = 'https://cloud.r-project.org/')"
-          Rscript -e "remotes::install_deps(repos = 'https://cloud.r-project.org/')"
+          Rscript -e "remotes::install_deps(dependencies = TRUE, repos = 'https://cloud.r-project.org/')"
       - name: Pull and Plot Data
         run: |-
           Rscript plot_compadrino.R
