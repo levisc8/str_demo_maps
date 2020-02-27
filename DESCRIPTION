@@ -3,5 +3,6 @@ Version: 0.1.0
 Imports: ggplot2,
     viridis,
     maps,
-    mapdata
+    mapdata,
+    mapproj
 License: CCBY-4.0
