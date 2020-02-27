@@ -1,5 +1,7 @@
 Package: str_demo_maps
 Version: 0.1.0
 Imports: ggplot2,
-    viridis
+    viridis,
+    maps,
+    mapdata
 License: CCBY-4.0
