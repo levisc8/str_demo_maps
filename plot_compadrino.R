@@ -69,7 +69,9 @@ library(viridis)
 
 wrld <- map_data('world')
 
-dir.create('figures', FALSE)
+dir.create('figures/png', FALSE, TRUE)
+dir.create('figures/pdf', FALSE, TRUE)
+
 
 kingdoms <- unique(db$Kingdom)
 
@@ -79,18 +81,27 @@ for(i in seq_along(kingdoms)) {
 
   use_king <- kingdoms[i]
 
-  col_path <- paste('figures/compadre-padrino-worldmap-color-',
+  g_col_path <- paste('figures/png/compadre-padrino-worldmap-color-',
                     use_king,
                     '.png',
                     sep = '')
-  bw_path <- paste('figures/compadre-padrino-worldmap-bw-',
+  g_bw_path <- paste('figures/png/compadre-padrino-worldmap-bw-',
                     use_king,
-                    '.png',
+                   '.png',
                     sep = '')
+
+  f_col_path <- paste('figures/pdf/compadre-padrino-worldmap-color-',
+                      use_king,
+                      '.pdf',
+                      sep = '')
+  f_bw_path <- paste('figures/pdf/compadre-padrino-worldmap-bw-',
+                     use_king,
+                     '.pdf',
+                     sep = '')
 
   use_db <- subset(db, Kingdom == use_king)
 
-  png(filename = col_path,
+  png(filename = g_col_path,
       height = 12,
       width = 8,
       units = 'in',
@@ -131,7 +142,7 @@ for(i in seq_along(kingdoms)) {
 
   dev.off()
 
-  png(filename = bw_path,
+  png(filename = g_bw_path,
       height   = 12,
       width    = 8,
       units    = 'in',
@@ -148,10 +159,9 @@ for(i in seq_along(kingdoms)) {
                  aes(color = Model,
                      x     = Lon,
                      y     = Lat),
-                 inherit.aes = FALSE,
-                 alpha       = 0.5) +
+                 inherit.aes = FALSE) +
       scale_color_manual(breaks = c("MPM", "IPM"),
-                         values = grey(c(0, 0.5))) +
+                         values = c('black', grey(0.5))) +
       theme(panel.background = element_rect(fill = NA),
             panel.grid = element_line(),
             legend.key = element_rect(fill = NA,
@@ -168,6 +178,84 @@ for(i in seq_along(kingdoms)) {
 
 
   dev.off()
+
+
+  # PDF
+
+  pdf(file = f_col_path,
+      height = 12,
+      width = 8)
+
+  plt <- ggplot(wrld,
+                aes(x     = long,
+                    y     = lat,
+                    group = group)) +
+    geom_polygon(color = 'grey50',
+                 fill  = NA) +
+    coord_map(xlim  = c(-180, 180)) +
+    geom_point(data = use_db,
+               aes(color = Model,
+                   x     = Lon,
+                   y     = Lat),
+               inherit.aes = FALSE,
+               alpha       = 0.5) +
+    theme(panel.background = element_rect(fill = NA),
+          panel.grid = element_line(),
+          legend.key = element_rect(fill  = NA,
+                                    color = 'black'),
+          legend.key.size = unit(0.03, 'npc'),
+          legend.text     = element_text(size  = 14),
+          legend.title    = element_text(size = 18)) +
+    scale_color_manual(breaks = c("MPM", "IPM"),
+                       values = viridis::inferno(2,
+                                                 begin     = 0.7,
+                                                 end       = 0,
+                                                 direction = -1)) +
+    scale_x_continuous("Longitude") +
+    scale_y_continuous("Latitude",
+                       breaks = c(-45, 0, 45)) +
+    ggtitle(use_king)
+
+  print(plt)
+
+
+  dev.off()
+
+  pdf(file = f_bw_path,
+      height   = 12,
+      width    = 8)
+
+  plt <- ggplot(wrld,
+                aes(x     = long,
+                    y     = lat,
+                    group = group)) +
+    geom_polygon(color = 'grey50',
+                 fill  = NA) +
+    coord_map(xlim  = c(-180, 180)) +
+    geom_point(data = use_db,
+               aes(color = Model,
+                   x     = Lon,
+                   y     = Lat),
+               inherit.aes = FALSE) +
+    scale_color_manual(breaks = c("MPM", "IPM"),
+                       values = c('black', grey(0.5))) +
+    theme(panel.background = element_rect(fill = NA),
+          panel.grid = element_line(),
+          legend.key = element_rect(fill = NA,
+                                    color = 'black'),
+          legend.key.size = unit(0.03, 'npc'),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 18)) +
+    scale_x_continuous("Longitude") +
+    scale_y_continuous("Latitude",
+                       breaks = c(-45, 0, 45)) +
+    ggtitle(use_king)
+
+  print(plt)
+
+
+  dev.off()
+
 
 }
 
