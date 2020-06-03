@@ -12,7 +12,18 @@ cdb_fetch <- function(cdb) {
   # fetch and load
   env <- new.env()
   x <- load(path, env)[1]
-  dbFetch <- env[[x]]@data
+  dbFetch <- env[[x]]
+
+  # Deal with differences between s4 and s3 versions of database
+
+  if(inherits(dbFetch, 'list')) {
+    dbFetch <- dbFetch[[1]]
+  } else if(inherits(dbFetch, "CompadreDB")) {
+    dbFetch <- dbFetch@data
+  } else {
+    stop("Cannot recognize class of currently fetched com(p)adre object",
+         call. = FALSE)
+  }
 
   sel_cols <- c('SpeciesAccepted', 'Kingdom', 'Lat', 'Lon')
 
@@ -60,75 +71,103 @@ wrld <- map_data('world')
 
 dir.create('figures', FALSE)
 
-png(filename = 'figures/compadre-padrino-worldmap-color.png',
-    height = 12,
-    width = 8,
-    units = 'in',
-    res = 450)
+kingdoms <- unique(db$Kingdom)
 
-  ggplot(wrld, aes(x = long, y = lat, group = group)) +
-    geom_polygon(color = 'grey50',
-                 fill = NA) +
-    coord_map(xlim = c(-180, 180)) +
-    geom_point(data = db,
-               aes(shape = Model,
-                   color = Kingdom,
-                   x = Lon,
-                   y = Lat),
-               inherit.aes = FALSE,
-               alpha = 0.9) +
-    theme(panel.background = element_rect(fill = NA),
-          panel.grid = element_line(),
-          legend.key = element_rect(fill = NA,
-                                    color = 'black'),
-          legend.key.size = unit(0.03, 'npc'),
-          legend.text = element_text(size = 14),
-          legend.title = element_text(size = 18)) +
-    scale_color_manual(breaks = c('Animalia',
-                                  'Chromalveolata',
-                                  'Chromista',
-                                  "Fungi",
-                                  'Plantae'),
-                       values = viridis::viridis(5)) +
-    scale_x_continuous("Longitude") +
-    scale_y_continuous("Latitude",
-                       breaks = c(-45, 0, 45))
+for(i in seq_along(kingdoms)) {
 
+  if(kingdoms[i] == "NA") next
 
-dev.off()
+  use_king <- kingdoms[i]
 
-png(filename = 'figures/compadre-padrino-worldmap-bw.png',
-    height = 12,
-    width = 8,
-    units = 'in',
-    res = 450)
+  col_path <- paste('figures/compadre-padrino-worldmap-color-',
+                    use_king,
+                    '.png',
+                    sep = '')
+  bw_path <- paste('figures/compadre-padrino-worldmap-bw-',
+                    use_king,
+                    '.png',
+                    sep = '')
 
-ggplot(wrld, aes(x = long, y = lat, group = group)) +
-  geom_polygon(color = 'grey50',
-               fill = NA) +
-  coord_map(xlim = c(-180, 180)) +
-  geom_point(data = db,
-             aes(shape = Model,
-                 color = Kingdom,
-                 x = Lon,
-                 y = Lat),
-             inherit.aes = FALSE) +
-  theme(panel.background = element_rect(fill = NA),
-        panel.grid = element_line(),
-        legend.key = element_rect(fill = NA,
-                                  color = 'black'),
-        legend.key.size = unit(0.03, 'npc'),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 18)) +
-  scale_color_manual(breaks = c('Animalia',
-                                'Chromalveolata',
-                                'Chromista',
-                                "Fungi",
-                                'Plantae'),
-                     values = grey(seq(0, 0.8, length.out = 5))) +
-  scale_x_continuous("Longitude") +
-  scale_y_continuous("Latitude",
-                     breaks = c(-45, 0, 45))
+  use_db <- subset(db, Kingdom == use_king)
+
+  png(filename = col_path,
+      height = 12,
+      width = 8,
+      units = 'in',
+      res = 450)
+
+    plt <- ggplot(wrld,
+                  aes(x     = long,
+                      y     = lat,
+                      group = group)) +
+      geom_polygon(color = 'grey50',
+                   fill  = NA) +
+      coord_map(xlim  = c(-180, 180)) +
+      geom_point(data = use_db,
+                 aes(color = Model,
+                     x     = Lon,
+                     y     = Lat),
+                 inherit.aes = FALSE,
+                 alpha       = 0.5) +
+      theme(panel.background = element_rect(fill = NA),
+            panel.grid = element_line(),
+            legend.key = element_rect(fill  = NA,
+                                      color = 'black'),
+            legend.key.size = unit(0.03, 'npc'),
+            legend.text     = element_text(size  = 14),
+            legend.title    = element_text(size = 18)) +
+      scale_color_manual(breaks = c("MPM", "IPM"),
+                         values = viridis::inferno(2,
+                                                   begin     = 0.7,
+                                                   end       = 0,
+                                                   direction = -1)) +
+      scale_x_continuous("Longitude") +
+      scale_y_continuous("Latitude",
+                         breaks = c(-45, 0, 45)) +
+      ggtitle(use_king)
+
+    print(plt)
 
 
-dev.off()
+  dev.off()
+
+  png(filename = bw_path,
+      height   = 12,
+      width    = 8,
+      units    = 'in',
+      res      = 450)
+
+    plt <- ggplot(wrld,
+                  aes(x     = long,
+                      y     = lat,
+                      group = group)) +
+      geom_polygon(color = 'grey50',
+                   fill  = NA) +
+      coord_map(xlim  = c(-180, 180)) +
+      geom_point(data = use_db,
+                 aes(color = Model,
+                     x     = Lon,
+                     y     = Lat),
+                 inherit.aes = FALSE,
+                 alpha       = 0.5) +
+      scale_color_manual(breaks = c("MPM", "IPM"),
+                         values = grey(c(0, 0.5))) +
+      theme(panel.background = element_rect(fill = NA),
+            panel.grid = element_line(),
+            legend.key = element_rect(fill = NA,
+                                      color = 'black'),
+            legend.key.size = unit(0.03, 'npc'),
+            legend.text = element_text(size = 14),
+            legend.title = element_text(size = 18)) +
+      scale_x_continuous("Longitude") +
+      scale_y_continuous("Latitude",
+                         breaks = c(-45, 0, 45)) +
+      ggtitle(use_king)
+
+    print(plt)
+
+
+  dev.off()
+
+}
+
