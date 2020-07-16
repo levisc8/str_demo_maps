@@ -25,7 +25,10 @@ cdb_fetch <- function(cdb) {
          call. = FALSE)
   }
 
-  sel_cols <- c('SpeciesAccepted', 'Kingdom', 'Lat', 'Lon')
+  sel_cols <- c('SpeciesAccepted',
+                'Kingdom',
+                'Lat',
+                'Lon')
 
   dbOut <- dbFetch[ , sel_cols]
 
