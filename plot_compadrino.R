@@ -1,4 +1,7 @@
 # functions
+library(ggplot2)
+library(viridis)
+library(RPadrino)
 
 cdb_fetch <- function(cdb) {
   # get url or path
@@ -32,7 +35,7 @@ cdb_fetch <- function(cdb) {
 
   dbOut <- dbFetch[ , sel_cols]
 
-  dbOut <- dbOut[!is.na(dbOut$Kingdom) , ]
+  # dbOut <- dbOut[!is.na(dbOut$Kingdom) , ]
   dbOut <- dbOut[!is.na(dbOut$Lat) & !is.na(dbOut$Lon), ]
 
   return(dbOut)
@@ -54,8 +57,10 @@ db$Model <- 'MPM'
 # so created a table with species name, kingdom, lat, and long data. Stored
 # on github, should be readable in the CRON environment (I think).
 
-pdb <- read.csv('padrino/padrino.csv',
-                stringsAsFactors = FALSE)
+pdb <- pdb_download(save = FALSE)
+
+pdb <- pdb$Metadata[ , c("species_accepted", "kingdom", "lat", "lon")]
+names(pdb) <- c("SpeciesAccepted", "Kingdom", "Lat", "Lon")
 
 pdb$Model <- 'IPM'
 
@@ -67,10 +72,11 @@ db <- rbind(db, pdb)
 
 # Build plots
 
-library(ggplot2)
-library(viridis)
 
 wrld <- map_data('world')
+
+unlink("figures", recursive = TRUE, force = TRUE)
+# unlink("figures/pdf", recursive = TRUE, force = TRUE)
 
 dir.create('figures/png', FALSE, TRUE)
 dir.create('figures/pdf', FALSE, TRUE)

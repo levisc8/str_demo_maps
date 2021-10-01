@@ -4,5 +4,7 @@ Imports: ggplot2,
     viridis,
     maps,
     mapdata,
-    mapproj
+    mapproj,
+    RPadrino
 License: CCBY-4.0
+Remotes: levisc8/RPadrino
