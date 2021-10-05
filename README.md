@@ -1,9 +1,7 @@
 # Scheduled job to build Compadre and Padrino world maps monthly
 
 This repo hosts a CRON job to build hi-res maps of Padrino and Compadre studies
-on a monthly basis. Results are stored `/figures`. Because Padrino doesn't really
-exist in the wild yet, the currently digitized studies are stored in a csv in
-the `padrino/` folder. It contains coordinates, species, and kingdom information.
+on a monthly basis. Results are stored `/figures`. 
 
 # Details
 
