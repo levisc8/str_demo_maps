@@ -5,6 +5,6 @@ Imports: ggplot2,
     maps,
     mapdata,
     mapproj,
-    RPadrino
+    Rpadrino
 License: CCBY-4.0
-Remotes: levisc8/RPadrino
+Remotes: padrinoDB/Rpadrino
