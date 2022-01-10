@@ -1,7 +1,7 @@
 # functions
 library(ggplot2)
 library(viridis)
-library(RPadrino)
+library(Rpadrino)
 
 cdb_fetch <- function(cdb) {
   # get url or path
