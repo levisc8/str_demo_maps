@@ -7,4 +7,3 @@ Imports: ggplot2,
     mapproj,
     Rpadrino
 License: CCBY-4.0
-Remotes: padrinoDB/Rpadrino
