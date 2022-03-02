@@ -1,6 +1,6 @@
 # Scheduled job to build Compadre and Padrino world maps monthly
 
-This repo hosts a CRON job to build hi-res maps of Padrino and Compadre studies
+This repo hosts a CRON job to build hi-res maps of [Padrino](https://padrinodb.github.io/Padrino/) and [Compadre](https://compadre-db.org/) studies
 on a monthly basis. Results are stored `/figures`. 
 
 # Details
